@@ -1,0 +1,10 @@
+declare const digest: any;
+declare const baseURL = "https://cloud.mongodb.com/api/atlas/v1.0/";
+declare const groupId = "5debe6029ccf648269ac2cb4";
+declare const databaseName = "develop-partner";
+declare const clusterName = "Cluster0";
+declare const collectionName = "partners";
+declare const publicKey = "TIRZTDHD";
+declare const privateKey = "d8b70b43-bdef-43a1-be32-58ccd7e78fac";
+declare const client: any;
+declare const makeRequest: () => Promise<void>;
