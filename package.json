@@ -2,6 +2,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/pgmharikrishnan"
   },
+  
   "name": "mongodb-atlas-search",
   "version": "1.0.1",
   "description": "Automatic mapping generation and index management for atlas search based on mongoose schema",
