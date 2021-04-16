@@ -1,6 +1,6 @@
 # mongodb-atlas-search
 
-mongodb-atlas-search is library for creating mongodb atlas mapping,autamating creation and updation of indexes as needed. 
+mongodb-atlas-search is a library for creating mongodb atlas mapping, automating the creation and updation of atlas indexes as needed. 
 
 ## Installation
 
@@ -24,13 +24,13 @@ const databaseName="DbName"
 ## Initialising with credentials
 const atlasSearch = new MongoDbAtlas(options,databaseName);
 
-## Fetching indexes created for a collection
+## Fetching indexes created on a collection
  atlasSearch.getAtlasSearchIndexes(collectionName) // 'returns array of AtlasSearchIndex'
 
 ## Building atlas mapping schema from mongoose schema
   const atlasMapping = atlasSearch.buildMappingFromSchema(schema.schema); //'returns atlas mapping'
 
-## Creating new atlas search index for on a collection
+## Creating new atlas search index on a collection
 const createResponse = await atlasSearch.createAtlasSearchIndex({
   database: databaseName,
   collectionName: collectionName,

@@ -2,7 +2,7 @@
 
 
   "name": "@pgmharikrishnan/mongodb-atlas-search",
-  "version": "1.0.1",
+  "version": "1.0.1r4",
   "description": "Automatic mapping generation and index management for atlas search based on mongoose schema",
   "main": "src/index.ts",
   "scripts": {
