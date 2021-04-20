@@ -49,7 +49,60 @@ const patchResponse = await atlasSearch.patchAtlasSearchIndex(
   },
 );
 ```
+## Example
 
+```bash
+import * as pluralize from 'mongoose-legacy-pluralize';
+import { get, isEqual } from 'lodash';
+ const collectionOptions = get(schema.schema, 'options');
+    const collectionName =
+      collectionOptions?.collection ?? pluralize(schema.name);
+    const atlasSearchIndex = <AtlasSearchIndex[]>(
+      await atlasSearch.getAtlasSearchIndexes(collectionName)
+    );
+    const defaultIndex = atlasSearchIndex.find(
+      (a) => a.name === 'default',
+    );
+
+    // Building mappings from mongoose schema
+    const atlasMapping = atlasSearch.buildMappingFromSchema(
+      schema.schema,
+    );
+    if (defaultIndex) {
+      // Default index exists so patch flow
+      if (isEqual(atlasMapping, defaultIndex.mappings)) {
+        // No changes in mapping skipping patch
+      } else {
+        // New changes in mapping sending patch request
+        const patchResponse = await atlasSearch.patchAtlasSearchIndex(
+          defaultIndex.indexID,
+          {
+            database: defaultIndex.database,
+            collectionName: defaultIndex.collectionName,
+            name: defaultIndex.name,
+            mappings: atlasMapping,
+          },
+        );
+        console.log(JSON.stringify(atlasMapping, null, 4));
+        console.log(JSON.stringify(patchResponse, null, 4));
+        console.log(`Mapping updated for ${collectionName}`);
+      }
+    } else {
+      // Default index does not exists so creating default index
+      console.log('Initiating creation of default index');
+      const createResponse = await atlasSearch.createAtlasSearchIndex({
+        database: databaseName,
+        collectionName: collectionName,
+        name: 'default',
+        mappings: atlasMapping,
+      });
+      console.log(JSON.stringify(atlasMapping, null, 4));
+      console.log(JSON.stringify(createResponse, null, 4));
+      console.log(`Mapping created for ${collectionName}`);
+    }
+  }
+},
+```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
