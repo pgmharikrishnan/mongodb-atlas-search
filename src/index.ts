@@ -1,6 +1,10 @@
 import { HttpMethod, request } from 'urllib';
 import { Schema } from 'mongoose';
-import { AtlasDataTypeMapping, AtlasSearchIndex, AtlasSearchOptions } from './types';
+import {
+  AtlasDataTypeMapping,
+  AtlasSearchIndex,
+  AtlasSearchOptions,
+} from './types';
 
 export const dotSeperatedObjectILabel = (obj: any) => {
   const res = {} as any;
@@ -24,22 +28,23 @@ export const dotSeperatedObjectILabel = (obj: any) => {
   return res;
 };
 
-function getAttributeTypes(schema: any) {
+function getAttributeTypes(schema: any, ignoreField?: string) {
   const response = {} as any;
   const schemaObj = schema.obj;
   const schemaObjKeys = Object.keys(schemaObj);
   schemaObjKeys.forEach((key) => {
-    if (typeof schemaObj[key].type === 'object') {
-      const className = schemaObj[key].type.constructor.name;
-      if (className === 'Schema') {
-        response[key] = getAttributeTypes(schemaObj[key].type);
+    if (ignoreField && schemaObj[key][ignoreField]) {
+      if (typeof schemaObj[key].type === 'object') {
+        const className = schemaObj[key].type.constructor.name;
+        if (className === 'Schema') {
+          response[key] = getAttributeTypes(schemaObj[key].type);
+        }
       }
-    }
-    if (typeof schemaObj[key].type === 'function') {
-      response[key] = {
-        dataType: schemaObj[key].type.name,
-        iLabel: schemaObj[key].label,
-      };
+      if (typeof schemaObj[key].type === 'function') {
+        response[key] = {
+          dataType: schemaObj[key].type.name,
+        };
+      }
     }
   });
   return response;
@@ -55,7 +60,8 @@ function getAtlasMapping(parsedSchema: any) {
     if (typeof parsedSchema[key] === 'object') {
       const dataType = parsedSchema[key].dataType;
       if (dataType) {
-        if (AtlasDataTypeMapping.hasOwnProperty(dataType)) fields[key] = AtlasDataTypeMapping[dataType];
+        if (AtlasDataTypeMapping.hasOwnProperty(dataType))
+          fields[key] = AtlasDataTypeMapping[dataType];
         else console.log(dataType, 'Datatype doesnot exist');
       } else {
         fields[key] = {
@@ -77,35 +83,38 @@ export class MongoDbAtlas {
     this.databaseName = databaseName;
     // this.client = new DigestFetch(this.options.publicKey, options.privateKey, {});
   }
-  async digestRequest(url: string, options: { method: HttpMethod; body?: any; headers?: any }) {
+  async digestRequest(
+    url: string,
+    options: { method: HttpMethod; data?: any; headers?: any },
+  ) {
     const response = await request(this.buildUrl(url), {
       ...options,
       digestAuth: `${this.options.publicKey}:${this.options.privateKey}`,
     });
-    return response.data.toString();
+    return JSON.parse(response.data.toString());
   }
   buildUrl(url: string) {
     return this.options.baseUrl + url;
   }
-  async makeRequest(collectionName: string) {
-    const url = `groups/${this.options.groupId}/clusters/${this.options.clusterName}/fts/indexes/${this.databaseName}/${collectionName}`;
-    return this.digestRequest(url, { method: 'GET' });
-  }
 
   async createAtlasSearchIndex(searchIndex: Partial<AtlasSearchIndex>) {
     const url = `groups/${this.options.groupId}/clusters/${this.options.clusterName}/fts/indexes/`;
+    console.log(searchIndex);
     return this.digestRequest(url, {
       method: 'POST',
-      body: JSON.stringify(searchIndex),
+      data: searchIndex,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  async patchAtlasSearchIndex(indexId: string, searchIndex: Partial<AtlasSearchIndex>) {
+  async patchAtlasSearchIndex(
+    indexId: string,
+    searchIndex: Partial<AtlasSearchIndex>,
+  ) {
     const url = `groups/${this.options.groupId}/clusters/${this.options.clusterName}/fts/indexes/${indexId}`;
     return await this.digestRequest(url, {
       method: 'PATCH',
-      body: JSON.stringify(searchIndex),
+      data: searchIndex,
       headers: { 'Content-Type': 'application/json' },
     });
   }
@@ -116,9 +125,9 @@ export class MongoDbAtlas {
   }
 
   buildMappingFromSchema(schema: Schema) {
-    const parsedSchema = getAttributeTypes(schema);
+    const parsedSchema = getAttributeTypes(schema, 'atlasIndex');
     const atlasMapping = getAtlasMapping(parsedSchema);
-    atlasMapping.fields.name = AtlasDataTypeMapping.autocomplete;
+    // atlasMapping.fields.name = AtlasDataTypeMapping.autocomplete;
     return atlasMapping;
   }
 }
