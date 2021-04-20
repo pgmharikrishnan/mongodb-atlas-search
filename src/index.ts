@@ -28,12 +28,11 @@ export const dotSeperatedObjectILabel = (obj: any) => {
   return res;
 };
 
-function getAttributeTypes(schema: any, ignoreField?: string) {
+function getAttributeTypes(schema: any) {
   const response = {} as any;
   const schemaObj = schema.obj;
   const schemaObjKeys = Object.keys(schemaObj);
   schemaObjKeys.forEach((key) => {
-    if (ignoreField && schemaObj[key][ignoreField]) {
       if (typeof schemaObj[key].type === 'object') {
         const className = schemaObj[key].type.constructor.name;
         if (className === 'Schema') {
@@ -45,7 +44,6 @@ function getAttributeTypes(schema: any, ignoreField?: string) {
           dataType: schemaObj[key].type.name,
         };
       }
-    }
   });
   return response;
 }
@@ -125,7 +123,7 @@ export class MongoDbAtlas {
   }
 
   buildMappingFromSchema(schema: Schema) {
-    const parsedSchema = getAttributeTypes(schema, 'atlasIndex');
+    const parsedSchema = getAttributeTypes(schema);
     const atlasMapping = getAtlasMapping(parsedSchema);
     // atlasMapping.fields.name = AtlasDataTypeMapping.autocomplete;
     return atlasMapping;
