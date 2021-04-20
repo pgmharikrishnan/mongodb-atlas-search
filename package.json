@@ -1,16 +1,16 @@
 {
-
-
   "name": "@pgmharikrishnan/mongodb-atlas-search",
-  "version": "1.0.2",
+  "version": "1.0.2r2",
   "description": "Automatic mapping generation and index management for atlas search based on mongoose schema",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsnd --respawn src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "prepublish": "tsc"
   },
   "author": "Harikrishnan K",
   "license": "ISC",
@@ -25,5 +25,15 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.2.3"
   },
-  "keywords":["mongodb", "mongodb atlas", "atlas search", "index mapping", "atlas api", "mongoose schema","automatic mapping from mongoose schema","mongodb-atlas-search","mongodb atlas search"]
+  "keywords": [
+    "mongodb",
+    "mongodb atlas",
+    "atlas search",
+    "index mapping",
+    "atlas api",
+    "mongoose schema",
+    "automatic mapping from mongoose schema",
+    "mongodb-atlas-search",
+    "mongodb atlas search"
+  ]
 }
