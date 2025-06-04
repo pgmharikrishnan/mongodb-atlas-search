@@ -1,7 +1,7 @@
 import { HttpMethod } from 'urllib';
 import { Schema } from 'mongoose';
 import { AtlasSearchIndex, AtlasSearchOptions } from './types';
-export declare const dotSeperatedObjectILabel: (obj: any) => any;
+export declare const dotSeparatedObjectILabel: (obj: any) => any;
 export declare class MongoDbAtlas {
     databaseName: string;
     options: AtlasSearchOptions;

@@ -6,7 +6,7 @@ import {
   AtlasSearchOptions,
 } from './types';
 
-export const dotSeperatedObjectILabel = (obj: any) => {
+export const dotSeparatedObjectILabel = (obj: any) => {
   const res = {} as any;
   (function recurse(obj, current = '') {
     for (const key in obj) {
